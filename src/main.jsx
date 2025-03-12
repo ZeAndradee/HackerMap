@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import HomePage from "./pages/HomePage/HomePage";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import "./index.css";
 
 const pages = [{ path: "/", element: <HomePage /> }];
 
