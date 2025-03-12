@@ -17,6 +17,8 @@ const Sidebar = ({
   saveDrawnArea,
   cancelAreaCreation,
   isMobileView,
+  isSaving,
+  saveError,
 }) => {
   return (
     <div
@@ -126,6 +128,8 @@ const Sidebar = ({
           setAreaColor={setAreaColor}
           saveDrawnArea={saveDrawnArea}
           cancelAreaCreation={cancelAreaCreation}
+          isSaving={isSaving}
+          saveError={saveError}
         />
       )}
 

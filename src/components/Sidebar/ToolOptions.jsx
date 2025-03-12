@@ -12,6 +12,8 @@ const ToolOptions = ({
   setAreaColor,
   saveDrawnArea,
   cancelAreaCreation,
+  isSaving,
+  saveError,
 }) => {
   return (
     <div className={styles.toolOptions}>
@@ -19,6 +21,8 @@ const ToolOptions = ({
         <>
           <h3>Criar Área</h3>
           <p>Desenhe um polígono no mapa para definir uma área de interesse.</p>
+
+          {saveError && <div className={styles.errorMessage}>{saveError}</div>}
 
           {tempDrawnLayers.length > 0 ? (
             <div className={styles.formContent}>
@@ -30,6 +34,7 @@ const ToolOptions = ({
                   value={areaName}
                   onChange={(e) => setAreaName(e.target.value)}
                   placeholder="Digite um nome para esta área"
+                  disabled={isSaving}
                 />
               </div>
 
@@ -40,6 +45,7 @@ const ToolOptions = ({
                   value={areaDescription}
                   onChange={(e) => setAreaDescription(e.target.value)}
                   placeholder="Descreva o que esta área representa"
+                  disabled={isSaving}
                 ></textarea>
               </div>
 
@@ -50,6 +56,7 @@ const ToolOptions = ({
                   id="areaColor"
                   value={areaColor}
                   onChange={(e) => setAreaColor(e.target.value)}
+                  disabled={isSaving}
                 />
               </div>
 
@@ -57,11 +64,16 @@ const ToolOptions = ({
                 <button
                   className={styles.btnCancel}
                   onClick={cancelAreaCreation}
+                  disabled={isSaving}
                 >
                   Cancelar
                 </button>
-                <button className={styles.btnComplete} onClick={saveDrawnArea}>
-                  Salvar Área
+                <button
+                  className={styles.btnComplete}
+                  onClick={saveDrawnArea}
+                  disabled={isSaving}
+                >
+                  {isSaving ? "Salvando..." : "Salvar Área"}
                 </button>
               </div>
             </div>

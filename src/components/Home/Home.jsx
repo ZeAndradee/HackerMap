@@ -4,10 +4,12 @@ import { getUserPosition, DEFAULT_MAP_POSITION } from "../../utils/mapUtils";
 import {
   extractCoordinatesFromLayer,
   createPolygonFromCoordinates,
+  convertMongoToLeafletCoordinates,
 } from "../../utils/drawingUtils";
 import MapComponent from "../Map/MapComponent";
 import Sidebar from "../Sidebar/Sidebar";
 import MapControls from "../Map/MapControls";
+import { getAllAreas, saveArea } from "../../services/AreaService";
 
 const Home = () => {
   const [position, setPosition] = useState(DEFAULT_MAP_POSITION);
@@ -37,6 +39,11 @@ const Home = () => {
   const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const [bottomSheetContent, setBottomSheetContent] = useState("search");
 
+  // Add states for saving data
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
+  const [savedAreas, setSavedAreas] = useState([]);
+
   // Check for mobile view on resize and update sidebar state accordingly
   useEffect(() => {
     const handleResize = () => {
@@ -63,6 +70,66 @@ const Home = () => {
         // Use default position if geolocation fails
         setLoading(false);
       });
+  }, []);
+
+  // Load saved areas from the database when component mounts
+  useEffect(() => {
+    const fetchAreas = async () => {
+      try {
+        const areaData = await getAllAreas();
+        console.log("Areas loaded from API:", areaData);
+        setSavedAreas(areaData);
+
+        // If there are areas from the database, add them to the map
+        if (areaData && areaData.length > 0) {
+          // Convert database areas to the format expected by the map
+          const formattedAreas = areaData.map((area) => {
+            // Get the MongoDB coordinates
+            const mongoCoordinates = area.coordinates.coordinates[0];
+            console.log("MongoDB coordinates:", mongoCoordinates);
+
+            // Convert from MongoDB [longitude, latitude] to Leaflet [latitude, longitude] format
+            const leafletCoordinates =
+              convertMongoToLeafletCoordinates(mongoCoordinates);
+            console.log("Converted Leaflet coordinates:", leafletCoordinates);
+
+            return {
+              id: area._id,
+              points: leafletCoordinates,
+              name: area.name,
+              description: area.properties?.description || "",
+              color: area.properties?.color || "#3388ff",
+            };
+          });
+
+          console.log("Formatted areas for map:", formattedAreas);
+          setAreas(formattedAreas);
+
+          // Center the map on the first area's center if available
+          if (
+            formattedAreas.length > 0 &&
+            formattedAreas[0].points &&
+            formattedAreas[0].points.length > 0
+          ) {
+            // Calculate center of first area by averaging all points
+            const points = formattedAreas[0].points;
+            const center = points.reduce(
+              (acc, point) => [
+                acc[0] + point[0] / points.length,
+                acc[1] + point[1] / points.length,
+              ],
+              [0, 0]
+            );
+            console.log("Centering map on:", center);
+            setPosition(center);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch areas:", error);
+      }
+    };
+
+    fetchAreas();
   }, []);
 
   const handleSearch = (e) => {
@@ -149,38 +216,88 @@ const Home = () => {
     });
   };
 
-  // Save the drawn area
-  const saveDrawnArea = () => {
+  // Save the drawn area - Updated to save to database
+  const saveDrawnArea = async () => {
     if (tempDrawnLayers.length === 0) {
       alert("Por favor, desenhe uma área no mapa primeiro");
       return;
     }
 
-    // Create a new area from the latest drawn shape
-    const latestDrawn = tempDrawnLayers[tempDrawnLayers.length - 1];
-    const newArea = createPolygonFromCoordinates(
-      latestDrawn.coords,
-      areaName,
-      areaDescription,
-      areaColor,
-      areas.length + 1
-    );
+    setIsSaving(true);
+    setSaveError(null);
 
-    setAreas([...areas, newArea]);
-    setTempDrawnLayers([]);
-    setAreaName("");
-    setAreaDescription("");
+    try {
+      // Create a new area from the latest drawn shape
+      const latestDrawn = tempDrawnLayers[tempDrawnLayers.length - 1];
 
-    // Close bottom sheet or drawing tool based on view
-    if (isMobileView) {
-      setBottomSheetVisible(false);
-    } else {
+      // Create local area object
+      const newArea = createPolygonFromCoordinates(
+        latestDrawn.coords,
+        areaName,
+        areaDescription,
+        areaColor,
+        areas.length + 1
+      );
+
+      // Prepare data for the API
+      const coordinates = [...latestDrawn.coords];
+
+      // Ensure the polygon is closed by adding the first point at the end if needed
       if (
-        !window.confirm("Área salva com sucesso! Deseja desenhar outra área?")
+        coordinates.length > 0 &&
+        (coordinates[0][0] !== coordinates[coordinates.length - 1][0] ||
+          coordinates[0][1] !== coordinates[coordinates.length - 1][1])
       ) {
-        setIsDrawing(false);
-        setActiveTool(null);
+        coordinates.push([...coordinates[0]]);
       }
+
+      const areaData = {
+        name: areaName,
+        coordinates: {
+          type: "Polygon",
+          coordinates: [coordinates],
+        },
+        properties: {
+          color: areaColor,
+          description: areaDescription,
+        },
+        status: "active",
+      };
+
+      // Save to database using the service
+      const savedArea = await saveArea(areaData);
+      console.log("Saved area response:", savedArea);
+
+      // Update the area ID with the one from the database
+      newArea.id = savedArea._id;
+
+      // Update state
+      setAreas([...areas, newArea]);
+      setSavedAreas([...savedAreas, savedArea]);
+      setTempDrawnLayers([]);
+      setAreaName("");
+      setAreaDescription("");
+
+      // Show success message
+      alert(`Área "${areaName}" salva com sucesso no banco de dados!`);
+
+      // Close bottom sheet or drawing tool based on view
+      if (isMobileView) {
+        setBottomSheetVisible(false);
+      } else {
+        if (
+          !window.confirm("Área salva com sucesso! Deseja desenhar outra área?")
+        ) {
+          setIsDrawing(false);
+          setActiveTool(null);
+        }
+      }
+    } catch (error) {
+      console.error("Error saving area to database:", error);
+      setSaveError(`Erro ao salvar a área: ${error.message}`);
+      alert(`Erro ao salvar área: ${error.message}`);
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -216,6 +333,8 @@ const Home = () => {
         saveDrawnArea={saveDrawnArea}
         cancelAreaCreation={cancelAreaCreation}
         isMobileView={isMobileView}
+        isSaving={isSaving}
+        saveError={saveError}
       />
 
       <div

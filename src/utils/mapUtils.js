@@ -33,4 +33,4 @@ export const getUserPosition = () => {
 };
 
 // Default map position (London)
-export const DEFAULT_MAP_POSITION = [51.505, -0.09];
+export const DEFAULT_MAP_POSITION = [-8.057777949367594, -34.88291167381032];

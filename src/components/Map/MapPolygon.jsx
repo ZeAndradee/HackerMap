@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Polygon, Popup } from "react-leaflet";
 
 const MapPolygon = ({ area }) => {
+  useEffect(() => {
+    console.log("Rendering polygon area:", area);
+  }, [area]);
+
+  if (!area || !area.points || area.points.length < 3) {
+    console.error("Invalid polygon data:", area);
+    return null;
+  }
+
   return (
     <Polygon
       positions={area.points}

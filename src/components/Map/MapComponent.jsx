@@ -35,6 +35,11 @@ const MapComponent = ({
 }) => {
   const mapRef = useRef(null);
 
+  // Debug areas
+  useEffect(() => {
+    console.log("Areas passed to MapComponent:", areas);
+  }, [areas]);
+
   // Style for full-height map
   const mapStyle = {
     height: "100%",
@@ -85,9 +90,13 @@ const MapComponent = ({
       )}
 
       {/* Display saved areas */}
-      {areas.map((area, index) => (
-        <MapPolygon key={area.id || index} area={area} />
-      ))}
+      {areas && areas.length > 0 ? (
+        areas.map((area, index) => (
+          <MapPolygon key={area.id || index} area={area} />
+        ))
+      ) : (
+        <div style={{ display: "none" }}>No areas to display</div>
+      )}
 
       {/* Attribution control in custom position */}
       <div className="map-attribution">Contribuidores do OpenStreetMap</div>
