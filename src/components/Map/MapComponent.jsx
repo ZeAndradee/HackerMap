@@ -32,25 +32,26 @@ const MapComponent = ({
   handleShapeDeleted,
   areaColor,
   isMobileView,
-  style,
 }) => {
   const mapRef = useRef(null);
-  const actualStyle = style || {
-    height: isMobileView ? "calc(100vh - 60px)" : "calc(100vh - 180px)",
+
+  // Style for full-height map
+  const mapStyle = {
+    height: "100%",
     width: "100%",
-    zIndex: 1,
   };
 
   return (
     <MapContainer
       center={position}
       zoom={13}
-      style={actualStyle}
+      style={mapStyle}
       ref={mapRef}
       zoomControl={false}
       attributionControl={false}
       doubleClickZoom={!isDrawing}
       dragging={true}
+      className="full-height-map"
     >
       <MapViewController position={position} />
 

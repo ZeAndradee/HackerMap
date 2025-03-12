@@ -1,4 +1,6 @@
 import L from "leaflet";
+// Import leaflet-draw library
+import "leaflet-draw";
 
 // Configure drawing controls
 export const createDrawControl = (featureGroup, color) => {

@@ -44,12 +44,13 @@ const MapControls = ({
         </button>
       )}
 
-      {/* Map Controls - Only Location Button */}
+      {/* Map Controls - Location Button */}
       <div className={styles.mapControls}>
         <button
           className={styles.controlBtn}
           onClick={() => setPosition(position)}
           aria-label="Ir para minha localização"
+          title="Minha Localização"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -70,7 +71,7 @@ const MapControls = ({
               d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
             />
           </svg>
-          {!isMobileView && "Minha Localização"}
+          {!isMobileView && <span>Minha Localização</span>}
         </button>
       </div>
     </>

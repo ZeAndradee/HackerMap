@@ -200,51 +200,7 @@ const Home = () => {
 
   return (
     <div className={styles.mapContainer}>
-      {/* Floating Action Button for mobile */}
-      {isMobileView && (
-        <div className={styles.fabContainer}>
-          <button
-            className={`${styles.fab} ${styles.fabPrimary}`}
-            onClick={() => toggleBottomSheet("tools")}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className={styles.fabIcon}
-            >
-              <path
-                d="M12 6v12m6-6H6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-            </svg>
-          </button>
-
-          <button
-            className={`${styles.fab} ${styles.fabSecondary}`}
-            onClick={() => toggleBottomSheet("search")}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              className={styles.fabIcon}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </button>
-        </div>
-      )}
-
-      {/* Sidebar Component - only fully visible on desktop */}
+      {/* Sidebar Component */}
       <Sidebar
         isSidebarOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}
@@ -264,46 +220,10 @@ const Home = () => {
 
       <div
         className={`${styles.mainContent} ${
-          !isMobileView || (isSidebarOpen && !isMobileView)
-            ? styles.sidebarOpen
-            : ""
+          isSidebarOpen ? styles.sidebarOpen : ""
         }`}
       >
-        {!isMobileView && !isSidebarOpen && (
-          <div className={styles.header}>
-            <h1>HackerMap</h1>
-            <p>Explore e crie áreas</p>
-          </div>
-        )}
-
-        {!isMobileView && (
-          <div className={styles.searchContainer}>
-            <form onSubmit={handleSearch}>
-              <input
-                type="text"
-                placeholder="Buscar localizações..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <button type="submit">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                  />
-                </svg>
-              </button>
-            </form>
-          </div>
-        )}
-
+        {/* Map Component + All overlays */}
         {loading ? (
           <div className={styles.loading}>
             <div className={styles.spinner}></div>
@@ -323,6 +243,46 @@ const Home = () => {
               isMobileView={isMobileView}
             />
 
+            {/* Overlay elements that float on top of the map */}
+
+            {/* Header - only show when sidebar is closed on desktop */}
+            {!isMobileView && !isSidebarOpen && (
+              <div className={styles.header}>
+                <h1>HackerMap</h1>
+                <p>Explore e crie áreas</p>
+              </div>
+            )}
+
+            {/* Search - only on desktop */}
+            {!isMobileView && (
+              <div className={styles.searchContainer}>
+                <form onSubmit={handleSearch}>
+                  <input
+                    type="text"
+                    placeholder="Buscar localizações..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <button type="submit">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                      />
+                    </svg>
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* Drawing help overlay */}
             {isDrawing && (
               <div className={styles.drawingHelpOverlay}>
                 <p>Use as ferramentas de desenho no mapa para criar sua área</p>
@@ -340,6 +300,53 @@ const Home = () => {
           </div>
         )}
 
+        {/* Mobile UI Components */}
+        {/* Floating Action Button for mobile */}
+        {isMobileView && (
+          <div className={styles.fabContainer}>
+            <button
+              className={`${styles.fab} ${styles.fabPrimary}`}
+              onClick={() => toggleBottomSheet("tools")}
+              aria-label="Abrir ferramentas"
+              title="Ferramentas"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={styles.fabIcon}
+              >
+                <path d="M12 6v12m6-6H6" />
+              </svg>
+            </button>
+
+            <button
+              className={`${styles.fab} ${styles.fabSecondary}`}
+              onClick={() => toggleBottomSheet("search")}
+              aria-label="Buscar localização"
+              title="Buscar"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className={styles.fabIcon}
+              >
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </button>
+          </div>
+        )}
+
         {/* Mobile Bottom Sheet */}
         {isMobileView && bottomSheetVisible && (
           <div className={styles.bottomSheet}>
@@ -348,18 +355,19 @@ const Home = () => {
               <button
                 className={styles.bottomSheetClose}
                 onClick={() => setBottomSheetVisible(false)}
+                aria-label="Fechar"
+                title="Fechar"
               >
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
-                  <path
-                    d="M18 6L6 18M6 6l12 12"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
+                  <path d="M18 6L6 18M6 6l12 12" />
                 </svg>
               </button>
             </div>

@@ -4,9 +4,9 @@
 /* Base styles */
 .mapContainer {
   display: flex;
-  flex-direction: column;
   min-height: 100vh;
   height: 100%;
+  width: 100%;
   background-color: var(--bg-light);
   position: relative;
   overflow: hidden;
@@ -19,17 +19,30 @@
   flex-direction: column;
   width: 100%;
   position: relative;
-  transition: var(--transition-normal);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Remove the problematic margin */
+.mainContent.sidebarOpen {
+  width: calc(100% - 300px);
+  margin-left: 300px;
 }
 
 /* Header */
 .header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
   padding: var(--spacing-md);
-  background-color: var(--primary-color-map);
+  background-color: rgba(63, 81, 181, 0.9);
   color: var(--text-light);
   text-align: center;
   border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
   box-shadow: var(--shadow-sm);
+  z-index: 600;
+  backdrop-filter: blur(4px);
 }
 
 .header h1 {
@@ -45,9 +58,14 @@
 
 /* Search container */
 .searchContainer {
+  position: absolute;
+  top: 0.5rem;
+  left: 0;
+  right: 0;
   padding: var(--spacing-md);
-  position: relative;
-  z-index: 5;
+  z-index: 600;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 .searchContainer form {
@@ -68,6 +86,7 @@
   border-radius: var(--border-radius-md);
 }
 
+/* REDESIGNED: Search Button Styling */
 .searchContainer button {
   position: absolute;
   top: 0;
@@ -79,11 +98,19 @@
   color: white;
   cursor: pointer;
   border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
-  transition: var(--transition-fast);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .searchContainer button:hover {
   background-color: var(--primary-dark);
+  transform: translateX(-1px);
+}
+
+.searchContainer button:active {
+  transform: translateX(0);
 }
 
 .searchContainer svg {
@@ -95,7 +122,9 @@
 .mapWrapper {
   flex: 1;
   position: relative;
-  z-index: 1;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
 /* Sidebar - Hidden by default on mobile */
@@ -133,26 +162,32 @@
   margin: 0;
 }
 
+/* REDESIGNED: Close Sidebar Button */
 .closeSidebar {
-  background: none;
+  background: rgba(255, 255, 255, 0.2);
   border: none;
   color: white;
   font-size: 1.5rem;
   cursor: pointer;
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .closeSidebar:hover {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
 }
 
-/* Tools styling */
+.closeSidebar:active {
+  transform: rotate(90deg) scale(0.95);
+}
+
+/* REDESIGNED: Tools styling */
 .toolsContainer {
   padding: var(--spacing-md);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -163,41 +198,53 @@
   align-items: center;
   width: 100%;
   background-color: white;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: var(--border-radius-sm);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-sm);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-md) var(--spacing-md);
+  margin-bottom: var(--spacing-md);
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: left;
   font-weight: 500;
+  box-shadow: var(--shadow-sm);
+  color: var(--text-dark);
 }
 
 .toolBtn svg {
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.3rem;
+  height: 1.3rem;
   margin-right: var(--spacing-md);
   color: var(--primary-color-map);
+  transition: all var(--transition-fast);
 }
 
 .toolBtn:hover {
   background-color: rgba(0, 0, 0, 0.03);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-color-map);
+}
+
+.toolBtn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .toolBtnActive {
   background-color: var(--primary-light);
   color: white;
   border-color: var(--primary-color-map);
+  box-shadow: var(--shadow-md);
 }
 
 .toolBtnActive svg {
   color: white;
 }
 
-/* Mobile FAB */
+/* REDESIGNED: Mobile FAB */
 .fabContainer {
   position: fixed;
-  bottom: var(--spacing-lg);
+  bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom, 0));
   right: var(--spacing-lg);
   display: flex;
   flex-direction: column;
@@ -206,8 +253,8 @@
 }
 
 .fab {
-  width: 56px;
-  height: 56px;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -215,12 +262,17 @@
   cursor: pointer;
   border: none;
   box-shadow: var(--shadow-md);
-  transition: transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+  transition: all var(--transition-fast);
+}
+
+.fab:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
 }
 
 .fab:active {
   transform: scale(0.95);
+  box-shadow: var(--shadow-sm);
 }
 
 .fabPrimary {
@@ -234,8 +286,8 @@
 }
 
 .fabIcon {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
 }
 
 /* Mobile Bottom Sheet */
@@ -269,16 +321,32 @@
   border-radius: 2.5px;
 }
 
+/* REDESIGNED: Bottom Sheet Close Button */
 .bottomSheetClose {
   position: absolute;
   top: var(--spacing-md);
   right: var(--spacing-md);
-  background: none;
+  background: rgba(0, 0, 0, 0.05);
   border: none;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   cursor: pointer;
   color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.bottomSheetClose:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  transform: rotate(90deg);
+}
+
+.bottomSheetClose svg {
+  width: 20px;
+  height: 20px;
 }
 
 .bottomSheetContent {
@@ -286,7 +354,7 @@
     calc(var(--spacing-md) + env(safe-area-inset-bottom, 0));
 }
 
-/* Mobile search in bottom sheet */
+/* REDESIGNED: Mobile search in bottom sheet */
 .mobileSearchContainer {
   padding: var(--spacing-md) 0;
 }
@@ -306,8 +374,16 @@
 .mobileSearchContainer input {
   padding: var(--spacing-md);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   font-size: 1rem;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-fast);
+}
+
+.mobileSearchContainer input:focus {
+  border-color: var(--primary-color-map);
+  box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+  outline: none;
 }
 
 .mobileSearchContainer button {
@@ -315,17 +391,28 @@
   background-color: var(--primary-color-map);
   color: white;
   border: none;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   font-weight: 500;
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  height: 48px;
+  font-size: 1rem;
+  box-shadow: var(--shadow-sm);
 }
 
-.mobileSearchContainer button:hover {
+.mobileSearchContainer button:hover,
+.mobileSearchContainer button:focus {
   background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
-/* Mobile tools grid */
+.mobileSearchContainer button:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
+}
+
+/* REDESIGNED: Mobile tools grid */
 .mobileToolsContainer {
   padding: var(--spacing-md) 0;
 }
@@ -354,25 +441,40 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: center;
-  height: 100px;
+  height: 110px;
+  box-shadow: var(--shadow-sm);
+}
+
+.mobileTool:hover,
+.mobileTool:focus {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
+}
+
+.mobileTool:active {
+  transform: translateY(0);
 }
 
 .mobileTool svg {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   margin-bottom: var(--spacing-sm);
   color: var(--primary-color-map);
+  transition: all var(--transition-fast);
 }
 
 .mobileTool span {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 500;
+  margin-top: var(--spacing-xs);
 }
 
 .activeToolBtn {
   background-color: var(--primary-light);
   color: white;
   border-color: var(--primary-color-map);
+  box-shadow: var(--shadow-md);
 }
 
 .activeToolBtn svg {
@@ -406,8 +508,17 @@
   width: 100%;
   padding: var(--spacing-md);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   font-size: 1rem;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+}
+
+.formGroup input[type="text"]:focus,
+.formGroup textarea:focus {
+  border-color: var(--primary-color-map);
+  box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+  outline: none;
 }
 
 .formGroup textarea {
@@ -419,7 +530,7 @@
   width: 100%;
   height: 44px;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   cursor: pointer;
 }
 
@@ -428,16 +539,22 @@
   gap: var(--spacing-md);
 }
 
+/* REDESIGNED: Form action buttons */
 .btnComplete,
 .btnCancel {
   flex: 1;
   padding: var(--spacing-md);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   font-weight: 500;
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
   border: none;
   font-size: 1rem;
+  height: 48px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .btnComplete {
@@ -445,17 +562,33 @@
   color: white;
 }
 
-.btnComplete:hover {
+.btnComplete:hover,
+.btnComplete:focus {
   background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btnComplete:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .btnCancel {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.06);
   color: var(--text-dark);
 }
 
-.btnCancel:hover {
-  background-color: rgba(0, 0, 0, 0.1);
+.btnCancel:hover,
+.btnCancel:focus {
+  background-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btnCancel:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Loading */
@@ -489,12 +622,12 @@
   }
 }
 
-/* Map Controls */
+/* REDESIGNED: Map Controls */
 .mapControls {
   position: absolute;
-  bottom: var(--spacing-lg);
+  bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom, 0));
   right: var(--spacing-lg);
-  z-index: 500;
+  z-index: 600;
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
@@ -503,26 +636,41 @@
 .controlBtn {
   display: flex;
   align-items: center;
-  padding: var(--spacing-sm) var(--spacing-md);
+  justify-content: center;
+  padding: var(--spacing-md);
   background-color: white;
   border: none;
-  border-radius: var(--border-radius-md);
+  border-radius: 50%;
   font-weight: 500;
-  box-shadow: var(--shadow-sm);
+  box-shadow: var(--shadow-md);
   cursor: pointer;
   font-size: 0.9rem;
   transition: all var(--transition-fast);
+  height: 50px;
+  width: 50px;
 }
 
-.controlBtn:hover {
+/* Hide the span text on mobile */
+.controlBtn span {
+  display: none;
+}
+
+.controlBtn:hover,
+.controlBtn:focus {
   background-color: var(--primary-light);
   color: white;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+.controlBtn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 .controlBtn svg {
-  width: 1rem;
-  height: 1rem;
-  margin-right: var(--spacing-sm);
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
 /* Drawing help overlay */
@@ -530,15 +678,17 @@
   position: absolute;
   top: var(--spacing-lg);
   left: 50%;
+  top: 100px;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
   padding: var(--spacing-md);
   border-radius: var(--border-radius-md);
   text-align: center;
-  z-index: 500;
+  z-index: 600;
   animation: pulse 2s infinite;
   max-width: 90%;
+  box-shadow: var(--shadow-md);
 }
 
 @keyframes pulse {
@@ -555,8 +705,8 @@
 
 /* Leaflet custom styling */
 :global(.leaflet-container) {
-  width: 100%;
-  height: calc(100vh - 60px);
+  width: 100% !important;
+  height: 100vh !important;
   z-index: 1;
 }
 
@@ -589,33 +739,145 @@
   display: none !important;
 }
 
-:global(.leaflet-draw-toolbar .leaflet-draw-draw-polygon) {
-  background-position: -31px -2px;
+/* Modern Draw Control Styling */
+:global(.leaflet-draw.leaflet-control) {
+  margin-top: 15px;
 }
 
-:global(.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-polygon) {
-  background-position: -30px -1px;
+:global(.leaflet-draw-toolbar) {
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  border: none !important;
+}
+
+:global(.leaflet-draw-toolbar a) {
+  width: 46px !important;
+  height: 46px !important;
+  line-height: 46px !important;
+  background-color: white !important;
+  border: none !important;
+  position: relative !important;
+  text-align: center !important;
+  background-image: none !important;
+}
+
+:global(.leaflet-draw-toolbar a:hover) {
+  background-color: var(--primary-light) !important;
+}
+
+:global(.leaflet-draw-toolbar a.leaflet-disabled) {
+  opacity: 0.5 !important;
+}
+
+:global(.leaflet-draw-toolbar .leaflet-draw-draw-polygon::before) {
+  content: "⬡";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 26px;
+  color: #3f51b5;
+}
+
+:global(.leaflet-draw-toolbar .leaflet-draw-draw-polygon:hover::before) {
+  color: white;
+}
+
+:global(.leaflet-draw-toolbar .leaflet-draw-edit-edit::before) {
+  content: "✎";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 26px;
+  color: #3f51b5;
+}
+
+:global(.leaflet-draw-toolbar .leaflet-draw-edit-edit:hover::before) {
+  color: white;
+}
+
+:global(.leaflet-draw-toolbar .leaflet-draw-edit-remove::before) {
+  content: "🗑";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  font-size: 26px;
+  color: #d32f2f;
+}
+
+:global(.leaflet-draw-toolbar .leaflet-draw-edit-remove:hover::before) {
+  color: white;
+}
+
+:global(.leaflet-draw-toolbar .leaflet-draw-edit-remove:hover) {
+  background-color: #d32f2f !important;
 }
 
 :global(.leaflet-draw-actions) {
-  left: 0 !important;
+  left: 60px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  box-shadow: var(--shadow-md) !important;
+  border-radius: var(--border-radius-md) !important;
+  overflow: hidden !important;
+  margin-top: 5px !important;
+}
+
+:global(.leaflet-draw-actions a) {
+  background-color: white !important;
+  color: var(--text-dark) !important;
+  font-family: inherit !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  line-height: 36px !important;
+  height: 36px !important;
+  padding: 0 15px !important;
+  transition: all var(--transition-fast) !important;
+  border: none !important;
+  text-decoration: none !important;
+}
+
+:global(.leaflet-draw-actions a:hover) {
+  background-color: var(--primary-light) !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+:global(.leaflet-touch .leaflet-draw-toolbar .leaflet-draw-draw-polygon) {
+  background-position: center;
 }
 
 /* Tablet styles */
 @media (min-width: 768px) {
-  .mapContainer {
-    flex-direction: row;
-  }
-
   .sidebar {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
     transform: translateX(0);
     height: 100vh;
     width: 300px;
+    z-index: 990;
   }
 
   .sidebar.sidebarClosed {
     transform: translateX(-100%);
+  }
+
+  /* This ensures the main content takes full width when sidebar is open */
+  .mainContent {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .mainContent.sidebarOpen {
+    width: calc(100% - 300px);
+    margin-left: 300px;
   }
 
   .header {
@@ -642,6 +904,23 @@
     flex-direction: row;
     right: var(--spacing-lg);
     bottom: var(--spacing-lg);
+  }
+
+  /* When in desktop view, show text in the location button */
+  .controlBtn {
+    border-radius: var(--border-radius-md);
+    width: auto;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .controlBtn svg {
+    margin-right: var(--spacing-sm);
+  }
+
+  .controlBtn span {
+    display: inline-block;
+    font-weight: 500;
+    font-size: 0.95rem;
   }
 }
 
@@ -700,7 +979,7 @@
   border-radius: var(--border-radius-sm) 0 0 0;
 }
 
-/* Tool options styling */
+/* REDESIGNED: Tool options styling */
 .toolOptions {
   padding: var(--spacing-md);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -741,7 +1020,7 @@
   line-height: 1.5;
 }
 
-/* Report cards */
+/* REDESIGNED: Report cards */
 .reportOptions {
   display: grid;
   grid-template-columns: 1fr;
@@ -755,13 +1034,13 @@
   padding: var(--spacing-md);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  transition: transform var(--transition-fast),
-    box-shadow var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .reportCard:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
   box-shadow: var(--shadow-md);
+  border-color: var(--primary-light);
 }
 
 .reportCard h4 {
@@ -782,15 +1061,27 @@
   background-color: var(--primary-color-map);
   color: white;
   border: none;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-md);
   font-weight: 500;
   font-size: 0.9rem;
   cursor: pointer;
-  transition: background-color var(--transition-fast);
+  transition: all var(--transition-fast);
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.reportBtn:hover {
+.reportBtn:hover,
+.reportBtn:focus {
   background-color: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.reportBtn:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Tablet and desktop adjustments */
@@ -800,7 +1091,7 @@
   }
 }
 
-/* Update Desktop Sidebar Toggle Button styles */
+/* REDESIGNED: Update Desktop Sidebar Toggle Button styles */
 .sidebarToggleBtn {
   position: fixed;
   top: var(--spacing-md);
@@ -818,10 +1109,11 @@
   cursor: pointer;
   font-size: 0.95rem;
   transition: all var(--transition-fast);
-  height: 42px;
+  height: 44px;
 }
 
-.sidebarToggleBtn:hover {
+.sidebarToggleBtn:hover,
+.sidebarToggleBtn:focus {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
   box-shadow: var(--shadow-lg);
@@ -829,6 +1121,7 @@
 
 .sidebarToggleBtn:active {
   transform: translateY(0);
+  box-shadow: var(--shadow-md);
 }
 
 .toggleBtnIcon {
