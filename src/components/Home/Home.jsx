@@ -10,6 +10,8 @@ import MapComponent from "../Map/MapComponent";
 import Sidebar from "../Sidebar/Sidebar";
 import MapControls from "../Map/MapControls";
 import { getAllAreas, saveArea } from "../../services/AreaService";
+import LocationTracker from "../LocationTracker/LocationTracker";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   const [position, setPosition] = useState(DEFAULT_MAP_POSITION);
@@ -36,6 +38,10 @@ const Home = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
   const [savedAreas, setSavedAreas] = useState([]);
+
+  // Location tracking state
+  const [isLocationTracking, setIsLocationTracking] = useState(false);
+  const [userLocation, setUserLocation] = useState(null);
 
   // Check for mobile view on resize and update sidebar state accordingly
   useEffect(() => {
@@ -77,8 +83,8 @@ const Home = () => {
         if (areaData && areaData.length > 0) {
           // Convert database areas to the format expected by the map
           const formattedAreas = areaData.map((area) => {
-            // Get the MongoDB coordinates
-            const mongoCoordinates = area.coordinates.coordinates[0];
+            // Get the MongoDB coordinates - fix to use geometry instead of coordinates
+            const mongoCoordinates = area.geometry?.coordinates[0] || [];
             console.log("MongoDB coordinates:", mongoCoordinates);
 
             // Convert from MongoDB [longitude, latitude] to Leaflet [latitude, longitude] format
@@ -239,7 +245,7 @@ const Home = () => {
 
       const areaData = {
         name: areaName,
-        coordinates: {
+        geometry: {
           type: "Polygon",
           coordinates: [coordinates],
         },
@@ -301,6 +307,31 @@ const Home = () => {
     }
   };
 
+  // Handle location updates from the LocationTracker
+  const handleLocationUpdate = (locationData) => {
+    setUserLocation(locationData);
+
+    // You could also update the map to center on the user's location
+    if (locationData) {
+      setPosition([locationData.latitude, locationData.longitude]);
+    }
+  };
+
+  // Add a function to render the location tracking button
+  const renderLocationTrackerLink = () => {
+    return (
+      <div className={styles.locationTrackerContainer}>
+        <h3>Location Tracking</h3>
+        <Link to="/track" className={styles.trackingPageLink}>
+          Go to Location Sender Page
+        </Link>
+        <p className={styles.locationNote}>
+          Update your last known location every 20 seconds
+        </p>
+      </div>
+    );
+  };
+
   return (
     <div className={styles.mapContainer}>
       {/* Sidebar Component */}
@@ -321,7 +352,10 @@ const Home = () => {
         isMobileView={isMobileView}
         isSaving={isSaving}
         saveError={saveError}
-      />
+      >
+        {/* Add the location tracker to the sidebar */}
+        {renderLocationTrackerLink()}
+      </Sidebar>
 
       <div
         className={`${styles.mainContent} ${

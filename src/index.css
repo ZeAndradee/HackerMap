@@ -6,9 +6,9 @@
 } /* Definição de variáveis CSS */
 :root {
   /* Cores */
-  --primary-color: #d56723;
-  --medium-color: #e89766;
-  --light-color: #f9c591;
+  --primary-color: #1474ff;
+  --primary-light: #4f97ff;
+  --primary-dark: #2e70d3;
   --border-color: #73777a;
   --border-color2: #d8d7d7;
   --border-radius: 6px;
@@ -26,9 +26,7 @@
   font-family: var(--font-family-base), Arial, Helvetica, sans-serif;
 
   /* Added from Home.module.css */
-  --primary-color-map: #3f51b5;
-  --primary-light: #6573c3;
-  --primary-dark: #2c387e;
+
   --secondary-color: #ff4081;
   --text-dark: #333333;
   --text-light: #ffffff;
@@ -86,7 +84,9 @@ button {
 }
 
 input,
-textarea {
+textarea,
+h3,
+p {
   font-family: var(--font-family-base);
 }
 
