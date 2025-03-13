@@ -1,25 +1,6 @@
-import axios from "axios";
+import useApi from "../hooks/useApi";
 
-// Create API instance directly instead of using the hook
-const api = axios.create({
-  baseURL: "http://localhost:3000",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-// Response interceptor to handle common error cases
-api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response && error.response.status === 401) {
-      console.log("401 Error intercepted: Unauthorized.");
-    }
-    return Promise.reject(error);
-  }
-);
+const api = useApi();
 
 export const getAllAreas = async () => {
   try {
