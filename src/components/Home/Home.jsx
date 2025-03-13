@@ -15,14 +15,7 @@ const Home = () => {
   const [position, setPosition] = useState(DEFAULT_MAP_POSITION);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [markers, setMarkers] = useState([
-    {
-      id: 1,
-      position: DEFAULT_MAP_POSITION,
-      name: "Localização de Exemplo",
-      description: "Este é um ponto de interesse de exemplo",
-    },
-  ]);
+  const [markers, setMarkers] = useState([]); // Empty array for markers as they're not needed
 
   // Sidebar and tools state
   const [isSidebarOpen, setIsSidebarOpen] = useState(window.innerWidth >= 768);
@@ -134,18 +127,11 @@ const Home = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Here you would typically call a geocoding API to search for locations
+    // Modified to not create markers anymore
     if (searchQuery.trim()) {
-      const newMarker = {
-        id: markers.length + 1,
-        position: [
-          position[0] + (Math.random() - 0.5) * 0.05,
-          position[1] + (Math.random() - 0.5) * 0.05,
-        ],
-        name: searchQuery,
-        description: `Resultado da busca para "${searchQuery}"`,
-      };
-      setMarkers([...markers, newMarker]);
+      // Here you could implement alternative search functionality,
+      // like searching for areas or zooming to a location
+      console.log("Search query:", searchQuery);
       setSearchQuery("");
 
       // Close bottom sheet after search on mobile
