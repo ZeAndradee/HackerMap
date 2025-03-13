@@ -35,25 +35,32 @@
   top: 0;
   left: 0;
   right: 0;
-  padding: var(--spacing-md);
-  background-color: rgba(63, 81, 181, 0.9);
+  padding: var(--spacing-lg) var(--spacing-md);
+  background: linear-gradient(
+    135deg,
+    rgba(4, 93, 208, 0.9),
+    rgba(0, 221, 158, 0.9)
+  );
   color: var(--text-light);
   text-align: center;
-  border-radius: 0 0 var(--border-radius-sm) var(--border-radius-sm);
-  box-shadow: var(--shadow-sm);
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   z-index: 600;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(8px);
 }
 
 .header h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.8rem;
+  font-weight: 700;
   margin-bottom: var(--spacing-xs);
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .header p {
-  font-size: 0.9rem;
-  opacity: 0.9;
+  font-size: 1rem;
+  opacity: 0.95;
+  font-weight: 500;
 }
 
 /* Search container */
@@ -152,8 +159,23 @@
   justify-content: space-between;
   align-items: center;
   padding: var(--spacing-md);
-  background: var(--primary-color);
+  background: linear-gradient(135deg, #045dd0, #00dd9e);
   color: white;
+  padding: 1.5rem var(--spacing-md);
+}
+
+.sidebarHeader img {
+  max-width: 200px;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+/* On mobile devices, make the logo smaller */
+@media (max-width: 767px) {
+  .sidebarHeader img {
+    max-width: 160px;
+  }
 }
 
 .sidebarHeader h2 {

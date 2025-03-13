@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "../Home/Home.module.css";
 import ToolOptions from "./ToolOptions";
+import logo2 from "../../assets/icons/InfoLogo2.svg";
 
 const Sidebar = ({
   isSidebarOpen,
@@ -27,7 +28,7 @@ const Sidebar = ({
       }`}
     >
       <div className={styles.sidebarHeader}>
-        <h2>Ferramentas HackerMap</h2>
+        <img src={logo2} alt="Logo" />
         {isMobileView && (
           <button
             className={styles.closeSidebar}
@@ -136,8 +137,8 @@ const Sidebar = ({
       {/* App info section at the bottom of sidebar */}
       <div className={styles.sidebarFooter}>
         <div className={styles.sidebarInfo}>
-          <p>HackerMap v1.0</p>
-          <p className={styles.copyright}>© 2023 HackerMap</p>
+          <p>Info Cidadão v1.0</p>
+          <p className={styles.copyright}>© 2025 Info Cidadão & Emprel</p>
         </div>
       </div>
     </div>

@@ -387,8 +387,8 @@ const Home = () => {
             {/* Header - only show when sidebar is closed on desktop */}
             {!isMobileView && !isSidebarOpen && (
               <div className={styles.header}>
-                <h1>HackerMap</h1>
-                <p>Explore e crie áreas</p>
+                <h1>Info Cidadão</h1>
+                <p>Explore e monitore sua cidade</p>
               </div>
             )}
 
